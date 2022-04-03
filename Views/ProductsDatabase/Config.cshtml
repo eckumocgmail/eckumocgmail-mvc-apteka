@@ -1,0 +1,20 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model System.String
+
+<form method="POST" action="/ProductsDatabase/Config">
+ 
+    <h2> Настройка соединения с истоником SqlServer </h2>
+ 
+    <div class="form-group">
+        <label for="ConnectionString">Строка соединения</label>
+        <input value="@Model" type="text" class="form-control" name="ConnectionString" id="ConnectionString"   placeholder="Строка соединения">        
+    </div>
+      
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+ 
+
+</form>

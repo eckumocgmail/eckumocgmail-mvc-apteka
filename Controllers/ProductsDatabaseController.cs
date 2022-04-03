@@ -11,38 +11,57 @@ namespace Mvc_Apteka.Controllers
     public class ProductsDatabaseController: Controller
     {
 
+        [HttpGet]
+        public IActionResult Config() => View("Config", Startup.ConnectionString);
+
+        [HttpPost]
+        public IActionResult Config(string ConnectionString)
+        {
+            using (var appDb = new AppDbContext() {
+                ConnectionString = ConnectionString 
+            }) {
+                if (appDb.Database.CanConnect())
+                {
+                    Startup.ConnectionString = ConnectionString;
+                    return Redirect("/Home/Index");
+                }
+            }
+            return View("Config",ConnectionString);
+            
+        }
+
 
         /// <summary>
         /// Обновление структуры данных
         /// </summary>
-        public bool CreateDatabase([FromServices] AppDbContext context)
+        public IActionResult CreateDatabase([FromServices] AppDbContext context)
         {
             bool result = false;
             try
             {
                 result = context.Database.EnsureCreated();
-                return result;
+                return View("CreateDatabase", result);
             }
             catch (Exception)
             {
-                return false;
+                return View("CreateDatabase", false);
             }
         }
 
         /// <summary>
         /// Уничтожение структуры данных
         /// </summary>
-        public bool DeleteDatabase([FromServices] AppDbContext context)
+        public IActionResult DeleteDatabase([FromServices] AppDbContext context)
         {
             bool result = false;
             try
             {
                 result = context.Database.EnsureDeleted();
-                return result;
+                return View("DeleteDatabase", result);
             }
             catch (Exception)
             {
-                return false;
+                return View("DeleteDatabase", false);
             }
         }
     }

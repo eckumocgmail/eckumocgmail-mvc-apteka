@@ -5,6 +5,7 @@ using Mvc_Apteka.Entities;
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace Mvc_Apteka
@@ -15,6 +16,9 @@ namespace Mvc_Apteka
     /// </summary>
     public class AppDbContext : DbContext
     {
+        [NotMapped]
+        public string ConnectionString { get; set; }
+
         public virtual DbSet<ProductCatalog> ProductCatalogs { get; set; }
         public virtual DbSet<ProductInfo> ProductInfos { get; set; }
         public virtual DbSet<ProductActivity> Activities { get; set; }
@@ -25,8 +29,20 @@ namespace Mvc_Apteka
 
         public AppDbContext(DbContextOptions options) : base(options)
         {
-       
+             
         }
+
+    
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (optionsBuilder.IsConfigured == false)
+            {
+                Console.WriteLine(ConnectionString);
+                optionsBuilder.UseSqlServer(ConnectionString);
+            }
+        }
+
+
 
         /// <summary>
         /// Обнаружение изменений сведений о продукции на складе,

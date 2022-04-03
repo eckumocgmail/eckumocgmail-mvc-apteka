@@ -15,21 +15,30 @@ namespace Mvc_Apteka
 {
     public class Startup
     {
+        public static string ConnectionString = "";
         public IConfiguration Configuration { get; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
-
+        
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews(ConfigureMvc).AddRazorRuntimeCompilation().AddJsonOptions(ConfigureJson);
-            string sqlServerConnectionString = Configuration.GetConnectionString("SqlServer");
+            string sqlServerConnectionString =
+                ConnectionString = Configuration.GetConnectionString("SqlServer");
             if (String.IsNullOrWhiteSpace(sqlServerConnectionString))
                 throw new KeyNotFoundException("Не найдена строка соединения с SqlServer в конфигурации приложения " +
                     "(секция ConnectionStrings). Внесите исправления в appsettings.json и повторите попытку.");
-            services.AddDbContext<AppDbContext>(options=>
-                options.UseSqlServer(sqlServerConnectionString));
+            
+            services.AddScoped(typeof(AppDbContext), sp => {
+                return new AppDbContext()
+                {
+                    ConnectionString = ConnectionString
+                };
+            });
+            //services.AddDbContext<AppDbContext>(options=>
+            //    options.UseSqlServer(sqlServerConnectionString));
         }
 
         private void ConfigureJson(JsonOptions jsonOptions)

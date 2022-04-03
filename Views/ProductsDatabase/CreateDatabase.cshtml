@@ -1,0 +1,33 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model System.Boolean
+ 
+@if( Model )
+{
+    
+    <div class="alert alert-info" style="width: 100%"> Структура данных успешно создана</div>
+    <a href="/Home/Index"> На главную </a>
+}
+else
+{
+
+
+    @inject AppDbContext db
+    @if (db.Database.CanConnect())
+    {            
+        <div class="alert alert-info" style="width: 100%"> Структура данных была создана ранее</div>
+        <a href="/Home/Index"> На страницу поиска </a>
+        <a href="/Home/Index"> На главную </a>
+    }
+    else
+    {
+        <div class="alert alert-danger" style="width: 100%"> Не удалось создать структуру данных , необходимо преверить соединение с источником.</div>
+        <a href="/ProductsDatabase/Config"> Перейти к настройки соединения с источником </a>
+        <a href="/Home/Index"> На главную </a>  
+    }  
+      
+
+}
