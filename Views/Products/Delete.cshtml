@@ -1,0 +1,67 @@
+﻿@using Mvc_Apteka.Entities
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model ProductInfo
+
+
+<form action="/Products/Delete" method="POST">    
+
+    <h2>Информация о медицинском препарате</h2>
+    <input type="hidden" asp-for="ID" />
+    
+
+
+    <div class="container-fluid">
+      <div class="row">
+          <div class="col-8" id="leftSlot"></div>
+          <div class="col-4" id="rightSlot"></div>
+      </div>
+    </div>
+
+
+
+
+    <div id="right" class="alert alert-info" style="width: 320px;">
+        <h4> Подтвердите удаление</h4>
+        <div class="text text-info">Вы действительно хотите удалить 'Информацию о медицинском препарате'?</div>
+        <div align="right">
+            <button class="btn btn-danger btn-sm">Сохранить</button>
+            <button class="btn btn-info btn-sm" onclick="event.preventDefault(); document.location.href=location.origin+'/Products/Index';">Отменить</button>
+        </div>
+    </div>
+    <script>
+        rightSlot.appendChild(right);
+    </script>
+
+
+    <div id="left">
+ 
+        <div class="text text-danger">
+            <div asp-validation-summary="All"></div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ProductName"></label>
+            <input asp-for="ProductName" disabled type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+            <div class="text text-danger"><span asp-validation-for="ProductName"></span></div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ProductPrice"></label>
+            <input asp-for="ProductPrice" disabled type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+            <div class="text text-danger"><span asp-validation-for="ProductPrice"></span></div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ProductCount"></label>
+            <input asp-for="ProductCount" disabled type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+            <div class="text text-danger"><span asp-validation-for="ProductCount"></span></div>
+        </div>
+  
+    </div>
+    <script> 
+        leftSlot.appendChild(left);
+    </script>
+
+ 
+</form>

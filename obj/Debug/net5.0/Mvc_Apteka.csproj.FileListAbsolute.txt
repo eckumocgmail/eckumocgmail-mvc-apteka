@@ -1,4 +1,3 @@
-D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Mvc_Apteka.csproj.AssemblyReference.cache
 D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Mvc_Apteka.GeneratedMSBuildEditorConfig.editorconfig
 D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Mvc_Apteka.AssemblyInfoInputs.cache
 D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Mvc_Apteka.AssemblyInfo.cs
@@ -421,6 +420,12 @@ D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\runtimes\win-arm64\native\e_sqlite3.d
 D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\runtimes\win-x64\native\e_sqlite3.dll
 D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\runtimes\win-x86\native\e_sqlite3.dll
 D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
-D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\Products\Search.cshtml.g.cs
-D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\Products\Search - Копировать.cshtml.g.cs
 D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\wwwroot\js\site-constructor.js
+D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\ProductsSearch\Search.cshtml.g.cs
+D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\Products\Edit.cshtml.g.cs
+D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\Products\Info.cshtml.g.cs
+D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\Products\Table.cshtml.g.cs
+D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\Products\Delete.cshtml.g.cs
+D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\Products\Search.cshtml.g.cs
+D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\Shared\FormView.cshtml.g.cs
+D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\Products\Create.cshtml.g.cs

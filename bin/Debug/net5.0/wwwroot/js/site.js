@@ -329,6 +329,7 @@ function $searchResults() {
             $clearNode(pnode);
         },
         $update: function (searchResults) {
+             
             try {
                 if (!(searchResults instanceof Array))
                     throw new Error('Функция обновления результатов поиска должна принимать аргумент типа массив');
@@ -359,8 +360,19 @@ function $searchResults() {
 }
 
 //<!--поле выбора выпадающим списком -->
-function $inputSearch(label, name, value, options, oninput) {
+function $inputSearch(label, name, value, options, oninput, onsearch) {
     const pnode = document.createElement('div');
+    pnode.addEventListener('keypress', function (evt) {
+  
+        if (evt.keyCode == 13) {
+            console.log(onsearch);
+            try {
+                eval(onsearch);
+            } catch (e) {
+                alert('$inputSearch(...) При обработки события keypress Ошибка ' + e);
+            }
+        }
+    }, true);
     const ctrl = {
         $options: function () {
             try {
@@ -375,7 +387,7 @@ function $inputSearch(label, name, value, options, oninput) {
                 alert('$inputSearch().$options(...) Ошибка ' + e);
             }
         },
-        $content(label, name, value, options, oninput) {
+        $content(label, name, value, options, oninput, onsearch) {
             let optionsContent = '';
             for (let i = 0; i < options.length; i++) {
                 optionsContent += '<option>' + options[i] + '</option>';
@@ -389,8 +401,8 @@ function $inputSearch(label, name, value, options, oninput) {
                     <datalist id="`+ name + `Options">` + optionsContent + `</datalist>
                 </div>`;
         },
-        $update(label, name, value, options, oninput) {
-            const content = ctrl.$content.apply(this, arguments);
+        $update(label, name, value, options, oninput, onsearch) {
+            const content = ctrl.$content.apply(this, arguments);            
             pnode.innerHTML = content;
         },
         $updateSearchOptions( list ) {
@@ -412,7 +424,7 @@ function $inputSearch(label, name, value, options, oninput) {
             pcontainer.appendChild(pnode);
         }
     };
-    ctrl.$update(label, name, value, options, oninput);
+    ctrl.$update(label, name, value, options, oninput, onsearch);
     ctrl.pnode = pnode;
     return ctrl;
 }

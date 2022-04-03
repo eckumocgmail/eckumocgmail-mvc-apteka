@@ -1,0 +1,48 @@
+﻿@using Microsoft.EntityFrameworkCore
+@using Mvc_Apteka.Entities
+@model ProductInfo
+<form action="/Products/Edit" method="POST" onsubmit="event.preventDefault();">    
+    <input type="hidden" asp-for="ID" />
+
+    <h2>Информация о медицинском препарате</h2>
+    <div>
+        <button style="margin: 3px;" class="btn btn-info btn-sm" onclick="event.preventDefault(); location.href='/Products/Edit?ID=@(Model.ID)';">Редактировать</button>
+        <button style="margin: 3px;" class="btn btn-info btn-sm" onclick="event.preventDefault(); location.href='/Products/Delete?ID=@(Model.ID)';">Удалить</button>
+    </div>
+    <div class="form-group">
+        <label asp-for="ProductName"></label>
+        <input asp-for="@(Model.ProductName)" type="text" disabled class="form-control" id="inputAddress" placeholder="1234 Main St">
+        <span asp-validation-for="ProductName"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ProductPrice"></label>
+        <input asp-for="@(Model.ProductPrice)" type="text" disabled class="form-control" id="inputAddress" placeholder="1234 Main St">
+        <span asp-validation-for="ProductPrice"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ProductCount"></label>
+        <input asp-for="@(Model.ProductCount)" type="text" disabled class="form-control" id="inputAddress" placeholder="1234 Main St">
+        <span asp-validation-for="ProductCount"></span>
+    </div>
+
+
+    <div>
+
+
+        <h3> Аналогичные препараты:  </h3>
+        @inject AppDbContext context
+
+        @foreach( var product in (context.ProductCatalogs.Include(c => c.Products).Where(c => c.ID == Model.ProductCatalogID).First().Products))
+        {
+            @if( product.ID != Model.ID)
+            {
+                <a class="btn btn-info" href="/Products/Info?ID=@(product.ID)">@product.ProductName</a>
+            }
+        }
+
+    </div>
+    <div align="right">        
+        <button class="btn btn-info" onclick="event.preventDefault(); location.href='/Products/Index';">Назад</button>
+    </div>
+ 
+</form>

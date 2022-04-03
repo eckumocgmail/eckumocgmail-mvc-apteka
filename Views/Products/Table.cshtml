@@ -1,0 +1,62 @@
+﻿@using Mvc_Apteka.Entities
+@*
+    aor more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IEnumerable<ProductInfo>
+ 
+ 
+    <table id="ProductsTable" class="table"  style="display: flex; flex-direction: column; flex-wrap: nowrap; position: static; width: 100%; height: 100%;">
+        <caption>
+            <h3>Медицинские препараты</h3>
+        </caption>
+        <thead style="position: static; font-weight: bold;"  id="thead">
+            <tr style="display: flex; flex-direction: row; flex-wrap: nowrap; width: 100%; ">
+                <td colspan="3" style="flex: 12;">
+               
+                    <!-- строка поиска -->
+                    <div>
+                        <div class="input-group flex-nowrap">
+                            <span class="input-group-text">$</span>
+                            <input type="text" class="form-control" placeholder="поиск" />
+                        </div>
+                    </div>
+
+
+                </td>
+            </tr>
+            <tr style="display: flex; flex-direction: row; flex-wrap: nowrap; width: 100%;" class="bg-info text-white"> 
+                <td style="flex: 8;">Наименование</td>
+                <td style="flex: 2;">Цена</td>
+                <td style="flex: 2; width: 140px;">Кол-во</td>
+            </tr>
+        </thead>
+        
+        <tbody id="ProductsTableBody" style="overflow-y: auto; display: flex; flex-direction: column; flex-wrap: nowrap; position: static; width: 100%;">
+            @foreach(ProductInfo product in Model)
+            {
+                <tr style="display: flex; flex-direction: row; flex-wrap: nowrap; width: 100%;"
+                    onmouseleave="this.classList.remove('bg-primary'); this.classList.remove('text-white');" 
+                    onmouseenter="this.classList.add('bg-primary'); this.classList.add('text-white');"
+                    onclick="document.location.href='/Products/Info?ID=@(product.ID)';">          
+                    <td style="flex: 8;">@(product.ProductName)</td>
+                    <td style="flex: 2;">@(product.ProductPrice)</td>
+                    <td style="flex: 2; width: 140px;">@(product.ProductCount)</td>
+                </tr>
+            }
+        </tbody>
+ 
+    </table>
+
+<script>
+    (function(){
+        function updateTableSize(){
+            ProductsTable.style.height = (screen.height-ProductsTableBody.offsetTop-200)+'px';
+        }
+        updateTableSize();
+        window.addEventListener('resize', function(){updateTableSize(); },true);
+    })();
+</script>
+
+ 

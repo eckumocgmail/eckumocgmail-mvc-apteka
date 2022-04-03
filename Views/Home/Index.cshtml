@@ -5,11 +5,50 @@
 <div class="text-center">
     <h1 class="display-4">Медицинские препараты</h1>    
     <div class="d-flex flex-row flex-nowrap" style="width: 100%; justify-content: space-around; ">
-        <a class="btn btn-primary" style="width: 100px; margin: 5px;" href="/Database/Create">Создать структуру данных</a>
-        <a class="btn btn-primary" style="width: 100px; margin: 5px;" href="/Database/Import">Загрузить первичные данные</a>
-        <a class="btn btn-primary" style="width: 100px; margin: 5px;" href="/Database/Delete">Удалить структуру данных</a>
+        <a class="btn btn-primary" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsDatabase/DeleteDatabase">Очистить структуру данных</a>
+        <a class="btn btn-primary" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsDatabase/CreateDatabase">Создать структуру данных</a>
+        <a class="btn btn-primary" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsXml/InitXml">Загрузить первичные данные</a>
+        <a class="btn btn-primary" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsXml/DownloadXml">Импорт из файла xml</a>
+        <a class="btn btn-primary" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsXml/UploadXml">Экспорт в файл xml</a>
+        <a class="btn btn-primary" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsJson/DownloadJson">Импорт из файла json</a>
+        <a class="btn btn-primary" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsJson/UploadJson">Экспорт в файл json</a>      
     </div>
+
+    <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Время</th>
+                    <th scope="col">ИД</th>
+                    <th scope="col">Наименование</th>
+                    <th scope="col">Изм. объёма</th>
+                    <th scope="col">Тек. объём</th>
+                    <th scope="col">Изм. цены</th>
+                    <th scope="col">Текущая цена</th>
+                </tr>
+            </thead>
+            <tbody>
+                @inject AppDbContext appDbContext
+                
+                    @foreach(var next in appDbContext.Activities)
+                    {
+                        <tr>
+                            <th scope="col">@next.BeginDate.ToLongTimeString()</th>
+                            <th scope="col">@next.ID</th>
+                            <th scope="col">@next.ProductID</th>
+                            <th scope="col">@next.ProductName</th>
+                            <th scope="col">@next.ProductCountDev</th>
+                            <th scope="col">@next.ProductCount</th>
+                            <th scope="col">@next.ProductPriceDev</th>
+                            <th scope="col">@next.ProductPrice</th>
+                        </tr>
+                    }
+                
+            </tbody>
+    </table>
 </div>
     
+
+
 
 

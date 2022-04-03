@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 using Mvc_Apteka.Entities;
 
@@ -12,35 +13,103 @@ namespace Mvc_Apteka
     {
         public virtual DbSet<ProductCatalog> ProductCatalogs { get; set; }
         public virtual DbSet<ProductInfo> ProductInfos { get; set; }
-
+        public virtual DbSet<ProductActivity> Activities { get; set; }
+        
         public AppDbContext() : base()
         {
         }
 
         public AppDbContext(DbContextOptions options) : base(options)
         {
+       
         }
+
+        public void BeforeSaveChanges()
+        {
+            ChangeTracker.DetectChanges();         
+            foreach (var entry in ChangeTracker.Entries().ToList())
+            {
+                if(entry.Entity.ToString() == typeof(Entities.ProductInfo).FullName)
+                {
+                    var activity = new ProductActivity();
+                    bool save = false;
+                    foreach (PropertyEntry property in entry.Properties)
+                    {
+                        if (property.IsModified)
+                        {
+                            
+                            Console.WriteLine(property.OriginalValue + "=>" + property.CurrentValue);
+                            switch (property.Metadata.Name)
+                            {
+                                case nameof(ProductInfo.ProductCount):
+                                    save = true;
+                                    activity.ProductCount = (int)property.CurrentValue;
+                                    activity.ProductCountDev = (int)property.CurrentValue - (int)property.OriginalValue;
+                                    break;
+                                case nameof(ProductInfo.ProductPrice):
+                                    save = true;
+                                    activity.ProductPrice = (float)property.CurrentValue;
+                                    activity.ProductPriceDev = (float)property.CurrentValue - (float)property.OriginalValue;
+                                    break;
+                            }
+
+                        }
+                        switch (property.Metadata.Name)
+                        {
+                            case nameof(ProductInfo.ProductName):
+                                activity.ProductName = (string)property.CurrentValue;                                
+                                break;
+                            case nameof(ProductInfo.ID):
+                                activity.ProductID = (int)property.CurrentValue;                                
+                                break;
+                        }
+                    }
+                    if(save)
+                        this.Activities.Add(activity);
+                }                                
+            }
+        }
+
+        public override int SaveChanges()
+        {
+
+            this.BeforeSaveChanges();
+            return base.SaveChanges();
+        }
+
+        
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+           
+            return base.SaveChanges(acceptAllChangesOnSuccess);
+        }
+
 
         public IQueryable<ProductInfo> ProductsSearch(IQueryable<ProductInfo> products, int minCount, int maxCount, float minPrice, float maxPrice)
         {
             var productsInCountingRange = ProductCountInRange(products, minCount, maxCount);
-            var productsInPriceRange = ProductPriceInRange(products, minPrice, maxPrice);
-            return products.Where(p =>
-                productsInCountingRange.Select(item => item.ID).Contains(p.ID) &&
-                productsInPriceRange.Select(item => item.ID).Contains(p.ID)
-            );
+            var productsInPriceRange = ProductPriceInRange(productsInCountingRange, minPrice, maxPrice);            
+            return productsInPriceRange;
         }
         public IQueryable<ProductInfo> ProductCountInRange(IQueryable<ProductInfo> products, int min, int max)
             => products.Where(p => p.ProductCount >= min && p.ProductCount <= max);
 
         public IQueryable<ProductInfo> ProductPriceInRange(IQueryable<ProductInfo> products, float min, float max)
-            => products.Where(p => p.ProductPrice >= min && p.ProductCount <= max);
+        {
+            products = products.Where(p => p.ProductPrice >= min && p.ProductPrice <= max);
+            
+            return products;
+        }
 
         public IQueryable<ProductInfo> ProductCountInRange(int min, int max)
             => this.ProductCountInRange(this.ProductInfos, min, max);
 
         public IQueryable<ProductInfo> ProductPriceInRange(float min, float max)
             => this.ProductPriceInRange(this.ProductInfos, min, max);
+
+        public bool HasProductWithName(string Name)
+            => this.ProductInfos.Any(p => p.ProductName.ToUpper() == Name.ToUpper());
+
 
 
         public void AddOrUpdate(ProductCatalog TargetCatalog)
@@ -88,11 +157,7 @@ namespace Mvc_Apteka
                     var TargetProduct = TargetProducts.Where(p => p.ProductName == Product.ProductName).First();
                     if (this.UpdateProductInfo(Product.ProductName, TargetProduct.ProductPrice, TargetProduct.ProductCount))
                         ProductsUpdated++;
-                }
-                    
-                
-
-
+                }                                    
             }
         }
 
@@ -102,7 +167,7 @@ namespace Mvc_Apteka
         public ProductInfo GetProductInfo(string ProductName)
             => this.ProductInfos.Where(p => p.ProductName == ProductName).FirstOrDefault();
 
-        public bool UpdateProductInfo(string productName, float productPrice, float productCount)
+        public bool UpdateProductInfo(string productName, float productPrice, int productCount)
         {
             ProductInfo p = this.GetProductInfo(productName);
             if( Equals(p, productName, productPrice, productCount)==false )

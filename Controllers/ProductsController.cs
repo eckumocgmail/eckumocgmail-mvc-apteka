@@ -17,185 +17,138 @@ using System.Xml.Serialization;
 
 namespace Mvc_Apteka.Controllers
 {
-    namespace Xml
+    public class ProductsController : ProductsSearchController
     {
-        /// <summary>
-        /// Сведения о лекарственном препарате
-        /// </summary>
-        public class LS
-        {
-            public System.String MNN { get; set; }
-            public System.Int32 LS_Id { get; set; }
+        public override IActionResult Index() => Redirect("/Products/Search");
 
-            [XmlIgnore]
-            public List<DATA> Products { get; set; } = new List<DATA> { };
+        public override IActionResult Search([FromServices] AppDbContext context,
+           string searchInput = "",
+           [FromQuery] float minPrice = 0,
+           [FromQuery] float maxPrice = 1000000,
+           [FromQuery] int minCount = 0,
+           [FromQuery] int maxCount = 1000000,
+           [FromQuery] int PageNumber = 1,
+           [FromQuery] int PageSize = 10)
+        {
+                   
+            return base.Search(context, searchInput, minPrice, maxPrice, minCount, maxCount, PageNumber, PageSize);
+        }
+
+        [HttpGet]
+        public IActionResult Create([FromServices] AppDbContext context)
+            => View(new ProductInfo());
+
+        [HttpPost]
+        public IActionResult Create([FromServices] AppDbContext context,  ProductInfo model)
+        {
+            model.ProductName = model.ProductName.Trim();
+            if (ModelState.IsValid)
+            {
+                bool success = true;
+                if (context.HasProductWithName(model.ProductName))
+                {
+                    success = false;
+                    ModelState.AddModelError("ProductName", "Наименование уже существует");
+                }
+                if (model.ProductPrice <= 0)
+                {
+                    success = false;
+                    ModelState.AddModelError("ProductPrice", "Цена - положительное число");
+                }
+                if (model.ProductCount <= 0)
+                {
+                    success = false;
+                    ModelState.AddModelError("ProductCount", "Кол-во - положительное число");
+                }
+                if (success)
+                {
+                    context.ProductInfos.Add(model);
+                    context.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return View(model);
+                }
+            }
+            else
+            {
+                return View(model);
+            }
         }
 
 
-        /// <summary>
-        /// Продажи лекарств
-        /// </summary>
-        public class DATA
-        {
-            public System.String NAME { get; set; }
-            public System.String PRICE { get; set; }
-            public System.String COUNT { get; set; }
-            public System.Int32 LS_Id { get; set; }
-        }
-    }
-    public class ProductsController: Controller
-    {
+        [HttpGet]
+        public IActionResult Edit([FromServices] AppDbContext context, int ID)
+            => View(context.ProductInfos.Find(ID));
+
+
         
-
-        public IActionResult Index() => Redirect("/Products/Search");
-
-
-        [HttpGet]
-        public IActionResult Search([FromServices] AppDbContext context, [FromQuery]int PageNubmer=1, [FromQuery] int PageSize=10)
+        [HttpPost]
+        public IActionResult Edit([FromServices] AppDbContext context, int ID, ProductInfo model)
         {
-            return View(context.ProductInfos.Skip((PageNubmer-1)*PageSize).Take(PageSize).ToList());
-        }
-
-
-        [HttpGet]
-        public object OnInput([FromServices] AppDbContext context, [FromQuery] string value)
-        {            
-            HttpContext.Response.ContentType = "application/json";
-            return new
+            model.ProductName = model.ProductName.Trim();
+            if (ModelState.IsValid)
             {
-                Options = context.ProductInfos.Where(p => p.ProductName.ToUpper().IndexOf(value.ToUpper()) != -1).Select(p => p.ProductName).ToList()
-            };
-        }
-
-        [HttpGet]
-        public IEnumerable<ProductCatalog> Catalogs([FromServices] AppDbContext context, [FromQuery] int PageNubmer = 1, [FromQuery] int PageSize = 10)
-        {
-            return context.ProductCatalogs.Include(p=>p.Products).Skip((PageNubmer - 1) * PageSize).Take(PageSize).ToList();
-        }
-
-
-
-        public IActionResult ExportJson( [FromServices] AppDbContext appDbContext )
-        {
-            string json = JsonConvert.SerializeObject(appDbContext.ProductInfos.ToList());
-            byte[] bytes = Encoding.UTF32.GetBytes(json);            
-            return File(bytes, "text/json");
-        }
-
-     
-
-
-        /// <summary>
-        /// Считывание данных из XML0-файла
-        /// </summary>
-        /// <param name="filename">путь к файлу</param>    
-        public object Import([FromServices]AppDbContext context, [FromServices] IWebHostEnvironment env)
-        {            
-           
-            var DrugList = new List<LS>();
-            string filepath = Path.Combine(
-                env.ContentRootPath,
-                "Resources",
-                "input.xml"
-            ).ToString();
-            using (var stream = new StreamReader(System.IO.File.OpenRead(filepath)))
-            {
-                DataSet dataset = new DataSet();
-                dataset.ReadXml(stream);
-                foreach (DataRow row in dataset.Tables[0].Rows)
-                {                   
-                    DrugList.Add(new LS()
-                    {
-                        MNN = row[0].ToString(),
-                        LS_Id = int.Parse(row[1].ToString())
-                    });                     
-                }
-                foreach (DataRow row in dataset.Tables[1].Rows)
-                {
-
-                    int catalogId = int.Parse(row[3].ToString());
-                    LS catalog = DrugList.Where(x => x.LS_Id == catalogId).FirstOrDefault();
-                    catalog.Products.Add(new DATA() {
-                        NAME = row[0].ToString(),
-                        COUNT = row[2].ToString(),
-                        PRICE = row[1].ToString()
-                    });                    
-                }
-                foreach (LS next in DrugList)
-                {
-                    var ProductCatalog = new Entities.ProductCatalog()
-                    {
-                        ProductCatalogName = next.MNN,
-                        ProductCatalogNumber = next.LS_Id
-                    };
-                    context.ProductCatalogs.Add(ProductCatalog);
-                    context.SaveChanges();
-                    foreach(DATA record in next.Products)
-                    {
-                        context.ProductInfos.Add(new ProductInfo() { 
-                            ProductCatalogID = ProductCatalog.ID,
-                            ProductName = record.NAME,
-                            ProductCount = float.Parse(record.COUNT.Replace(".", ",")),
-                            ProductPrice = float.Parse(record.PRICE.Replace(".", ","))
-                        });
-                    }
-                    context.SaveChanges();
-                    //context.AddOrUpdate(ProductCatalog);
-                }
+                bool success = true;
                 
+                if (model.ProductPrice <= 0)
+                {
+                    success = false;
+                    ModelState.AddModelError("ProductPrice", "Цена - положительное число");
+                }
+                if (model.ProductCount <= 0)
+                {
+                    success = false;
+                    ModelState.AddModelError("ProductCount", "Кол-во - положительное число");
+                }
+                if (success)
+                {
+                    var product = context.ProductInfos.Find(ID);
+                    if (product.ProductName != model.ProductName)
+                    {
+                        if (context.HasProductWithName(model.ProductName))
+                        {
+                             
+                            ModelState.AddModelError("ProductName", "Наименование уже существует");
+                            return View(model);
+                        }
+                    }
+                    product.ProductCount = model.ProductCount;
+                    product.ProductPrice = model.ProductPrice;
+                    context.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return View(model);
+                }
             }
-
-            return DrugList;
+            else
+            {
+                return View(model);
+            }
+                   
         }
 
-        /// <summary>
-        /// Geeration-скрипт
-        /// </summary>    
-        public string GetPrimaryDatabaseSql()
+
+        [HttpGet]
+        public IActionResult Delete([FromServices] AppDbContext context, int ID)
+            => View(context.ProductInfos.Find(ID));
+
+        [HttpPost]
+        public IActionResult Delete([FromServices] AppDbContext context, int ID, ProductInfo model)
         {
-            return @"
-            CREATE TABLE [DBO].[LS](
-              MNN nvarchar(max)
-              LS_Id int primary identity(1,1)
-            )
-            GO
-            CREATE TABLE [DBO].[DATA](
-              NAME nvarchar(max),
-              PRICE nvarchar(max),
-              COUNT nvarchar(max),
-              LS_Id int primary identity(1,1)
-            )
-            GO
-        ";
+            var product = context.ProductInfos.Find(ID);
+            context.ProductInfos.Remove(product);
+            context.SaveChanges();
+            return RedirectToAction("Index");
         }
 
+
+        public IActionResult Info([FromServices] AppDbContext context, int ID)
+            => View(context.ProductInfos.Find(ID));
         
-        public bool CreateDatabase([FromServices] AppDbContext context)
-        {
-            bool result = false;
-            try
-            {
-                result = context.Database.EnsureCreated();
-                return result;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-        public bool DeleteDatabase([FromServices] AppDbContext context)
-        {
-            bool result = false;
-            try
-            {
-                result = context.Database.EnsureDeleted();
-                return result;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
     }
 }
+

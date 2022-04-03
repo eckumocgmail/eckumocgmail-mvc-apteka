@@ -1,178 +1,83 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using Mvc_Apteka.Entities
+ 
+@model System.Object
 @{
-}
-
+    IEnumerable<ProductInfo> Products = (IEnumerable<ProductInfo>)(Model.GetType().GetProperty("SearchResults").GetValue(Model));
+} 
  
 
-<div id="Model" style="display: none;" >@(Newtonsoft.Json.JsonConvert.SerializeObject(Model))</div>
-<script>
-    
-
-    function $searchPage( uri ){
-        const ctrl = {
+<form style="height: 100%;" action="/Products/Search">
+    <table class="table"  style="display: flex; flex-direction: column; flex-wrap: nowrap; position: static; width: 100%; height: 100%;">
+        <caption>
+            <h3>Медицинские препараты</h3>
+        </caption>
+        <thead style="position: static; font-weight: bold;"  id="thead">
+            <tr style="display: flex; flex-direction: row; flex-wrap: nowrap; width: 100%;">
+                <td colspan="3" style="flex: 12; display: flex; flex-direction: row; flex-wrap: nowrap; width: 100%;">
             
-            $global(){
-                if( typeof(window['ctrl'])=='undefined'  ){
-                    return window['ctrl']={                
-                    };
-                }else{
-                     return window['ctrl'];
-                }
-            },
-
-            /// парсинг содержимого элемента <div id="Model"> ... </div>
-            $model: function GetModel(){
-                try{
-                    if( !ctrl._model ){
-                        ctrl._model=JSON.parse(Model.innerHTML);
-                        Model.innerHTML = '';
-                        Model.style.display = 'block';
-                        return ctrl._model;
-                    }else{
-                        return ctrl._model;
-                    }                    
-                }catch(e){
-                    alert('$getModel() Ошибка '+e);
-                }
-            },
+                    <!-- панель инструментов -->
+                    <div style="display: flex; flex-direction: row; flex-wrap: nowrap; width: 100%;">
+                        <a class="btn btn-info" href="/Products/Create" style="margin-left: 2px;">создать</a>                        
+                        <a class="btn btn-info" href="/ProductsData/Import" style="margin-left: 2px;">импорт</a>
+                        <a class="btn btn-info" href="/ProductsData/Export"style="margin-left: 2px;">экспорт</a>
+                    </div>
+                    <!-- строка поиска -->
+                    <div style="margin-left : 10px; width: 100%;">
+                        <div class="input-group flex-nowrap" style="width: 100%;">
+                            <span class="input-group-text">$</span>
+                            <input type="text" class="form-control" placeholder="поиск" id="searchInput" name="searchInput" value="@(Model.GetType().GetProperty("SearchQuery").GetValue(Model))" />
+                        </div>
+                    </div>
 
 
-            $createContentLayout(){
-                if( !ctrl._contentLayout ){
-                    return ctrl._contentLayout = $contentLayout(Model);
-                }else{
-                    return ctrl._contentLayout;
-                }
-            },
-
-            $createSearchOptions(){
-                if( !ctrl._options ){
-                    return ctrl._options=[];
-                }else{
-                    return ctrl._options;
-                }
-            },
-
-            $updateSearchOptions(options){
-                if( !options )
-                    throw new Error('Аргумент options функции $updateSearchOptions(...) принимает недействительное значение');
-
-                const current = ctrl.$createSearchOptions();
-                while(current.length>0)
-                    current.shift();
-                while(options.length>0)
-                    current.push(options.shift());
-                ctrl.$createInputSearch().$updateSearchOptions(current);
-            },
-
-            $createInputSearch(){
-                if( !ctrl._inputSearch ){
-                    return ctrl._inputSearch = $inputSearch('поиск','searchInput','',ctrl.$createSearchOptions(), 'console.log($global().$oninput({ name: event.target.name, value: event.target.value })); event.preventDefault();');
-                }else{
-                    return ctrl._inputSearch;
-                }                
-            },
-
-            $layoutInputSearch(){
-                ctrl.$createContentLayout().$top(ctrl.$createInputSearch().pnode);
-            },
-
-
-            $layoutSearchFilters(){
-            },
-
-            $createSearchresults(){
-                if( !ctrl._searchResults ){
-                    return ctrl._searchResults = $searchResults();
-                }else{
-                    return ctrl._searchResults;
-                }
-            },
-
-            $layoutSearchResults(){
-                ctrl.$createContentLayout().$view(ctrl.$createSearchresults().pnode);
-            },
-
-            $updateSearchResults( products ){
-                
-                ctrl.$createSearchresults().$update(this._model = (ctrl._products = products).map(function(product){
-                    return {
-                        title:      '',
-                        subtitle:   product.ProductName,
-                        text:       '',
-                        ahref:      'javascript:alert(1)',
-                        atext:      'купить'
-                    };
-                }));
-            },
-
-            $init(){
-                ctrl.$model();
-                ctrl.$layoutInputSearch();
-                ctrl.$layoutSearchFilters();
-                ctrl.$layoutSearchResults();
-                ctrl.$updateSearchResults(ctrl.$model());     
-                ctrl.$updateSearchOptions(['A','AAA']);
-            },
-
-            $onerror( message ){
-                alert(message);
-            },
+                </td>
+            </tr>
+            <tr style="display: flex; flex-direction: row; flex-wrap: nowrap; width: 100%; ">
+                <td colspan="3" style="flex: 12;">
             
-            $oninput( message ){
-                if( !message )
-                    throw new Error('Аргумент message фукнции oninput(..) не определён');
-                if( !message.name )
-                    throw new Error('Аргумент message.name фукнции oninput(..) не определён');
-                if( typeof(message.value)=='undefined' )
-                    throw new Error('Аргумент message.value фукнции oninput(..) не определён');                
-                console.log(`$oninput(${JSON.stringify(message)})`);
-                switch(message.name){
-                    case 'searchInput':
-                        const location = `${uri}/OnInput`;
-                        $http().$get(location,message).then(
-                            (state)=>{
-                                if( !state )
-                                    throw new Error('Обработчик запроса '+location+' получил не дейтсвительное значение в аргументе state');    
-                                if( !state.status )
-                                    throw new Error('Обработчик запроса '+location+' получил не дейтсвительное значение в аргументе state.status');    
-                                if( !state.headers )
-                                    throw new Error('Обработчик запроса '+location+' получил не дейтсвительное значение в аргументе state.headers');    
-                                console.log(state);
-                                switch(state.status)
-                                {
-                                    case 200:
-                                        if( !state.response )
-                                            throw new Error('Обработчик запроса '+location+' получил не дейтсвительное значение в аргументе state.response');    
-                                        if (!state.response.options)
-                                            throw new Error('В ответном сообщении нет ключа options ');
-                                        ctrl.$updateSearchOptions(state.response.options);
-                                        console.log('Свойвса автоподстановки обнослены');
-                                        break;
-                                    case 500:
-                                        break;
-                                    default:
-                                        ctrl.$onerror(state);
-                                }
-                                //const response = JSON.parse(response);
+                        
 
-                            }, 
-                            (err)=>{
-                                ctrl.$onerror('Ошибка при обработки события oninput: '+err);
-                            }
-                        );
-                        break;
-                }                
-                return message;
-            }
-        };
+
+
+                </td>
+            </tr>
+               
+                    
+            <tr style="display: flex; flex-direction: row; flex-wrap: nowrap; width: 100%;" class="bg-info text-white"> 
+                <td style="flex: 8;">Наименование</td>
+                <td style="flex: 2;">Цена</td>
+                <td style="flex: 2; width: 140px;">Кол-во</td>
+            </tr>
+        </thead>
         
-        Object.assign(ctrl.$global(), ctrl);
-        ctrl.$init();
-    }
-</script>
-<script>
-    const searchPage = $searchPage('/Products');
-</script>
+        <tbody style="overflow-y: auto; display: flex; flex-direction: column; flex-wrap: nowrap; position: static; width: 100%;">
+            @if (Products.Count() > 0)
+            {
+                @foreach(var product in Products)
+                {
+                    <tr style="display: flex; flex-direction: row; flex-wrap: nowrap; width: 100%;"
+                        onmouseleave="this.classList.remove('bg-primary'); this.classList.remove('text-white');" 
+                        onmouseenter="this.classList.add('bg-primary'); this.classList.add('text-white');"
+                        onclick="document.location.href='/Products/Info?ID=@(product.ID)';">          
+                        <td style="flex: 8;">@(product.ProductName)</td>
+                        <td style="flex: 2;">@(product.ProductPrice)</td>
+                        <td style="flex: 2; width: 140px;">@(product.ProductCount)</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr style="display: flex; flex-direction: row; flex-wrap: nowrap; width: 100%;">
+                    <td colspan="3" style="flex: 12;">
+                        <div class="alert alert-info" > Нечего не найдено </div>
+                    </td>
+                </tr>   
+            }
+            
+        </tbody>
+ 
+    </table>
+</form>
+
+
+ 

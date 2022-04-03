@@ -1,0 +1,9 @@
+﻿@model dynamic
+
+
+
+@foreach(System.Reflection.PropertyInfo property in Model.GetType().GetProperties())
+{
+    <div>@(property)</div>
+
+}
