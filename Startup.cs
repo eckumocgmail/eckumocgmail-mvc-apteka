@@ -20,6 +20,7 @@ namespace Mvc_Apteka
         {
             Configuration = configuration;
         }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews(ConfigureMvc).AddRazorRuntimeCompilation().AddJsonOptions(ConfigureJson);

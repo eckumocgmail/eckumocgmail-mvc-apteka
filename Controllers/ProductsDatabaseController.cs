@@ -4,9 +4,17 @@ using System;
 
 namespace Mvc_Apteka.Controllers
 {
+
+    /// <summary>
+    /// Управление структурой БД
+    /// </summary>
     public class ProductsDatabaseController: Controller
     {
 
+
+        /// <summary>
+        /// Обновление структуры данных
+        /// </summary>
         public bool CreateDatabase([FromServices] AppDbContext context)
         {
             bool result = false;
@@ -21,6 +29,9 @@ namespace Mvc_Apteka.Controllers
             }
         }
 
+        /// <summary>
+        /// Уничтожение структуры данных
+        /// </summary>
         public bool DeleteDatabase([FromServices] AppDbContext context)
         {
             bool result = false;

@@ -5,14 +5,28 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Mvc_Apteka.Entities
 {
+    /// <summary>
+    /// Журнал поступления продукции, изм. цены 
+    /// </summary>
     public class ProductActivity
     {         
         [Key]
         public int ID { get; set; }
+
+
+        /// <summary>
+        /// ИД продукции
+        /// </summary>
         public int ProductID { get; set; }
+
+        /// <summary>
+        /// Наименование изменённой продукции
+        /// </summary>
         public string ProductName { get; set; }
 
-        
+        /// <summary>
+        /// Время фиксации
+        /// </summary>
         public DateTime BeginDate { get; set; } = DateTime.Now;
         
         [Display(Name = "Изменение объёма продукции на складе")]

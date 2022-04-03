@@ -19,36 +19,16 @@ using System.Xml.Serialization;
 
 namespace Mvc_Apteka.Controllers
 {
-    namespace Xml
-    {
-        /// <summary>
-        /// Сведения о лекарственном препарате
-        /// </summary>
-        public class LS
-        {
-            public System.String MNN { get; set; }
-            public System.Int32 LS_Id { get; set; }
 
-            [XmlIgnore]
-            public List<DATA> Products { get; set; } = new List<DATA> { };
-        }
-
-
-        /// <summary>
-        /// Продажи лекарств
-        /// </summary>
-        public class DATA
-        {
-            public System.String NAME { get; set; }
-            public System.String PRICE { get; set; }
-            public System.String COUNT { get; set; }
-            public System.Int32 LS_Id { get; set; }
-        }
-    }
+    /// <summary>
+    /// Импорт-экспорт файлов формата XML
+    /// </summary>
     public class ProductsXmlController: FilesController
     {
 
-
+        /// <summary>
+        /// Экспорт файла XML
+        /// </summary>
         public IActionResult DownloadXml([FromServices] AppDbContext appDbContext)
         {
             string json = JsonConvert.SerializeObject(appDbContext.ProductInfos.ToList());
@@ -57,7 +37,9 @@ namespace Mvc_Apteka.Controllers
         }
 
 
-
+        /// <summary>
+        /// Импорт файла XML
+        /// </summary>        
         public async Task UploadXml()
         {
             try
@@ -156,5 +138,36 @@ namespace Mvc_Apteka.Controllers
             return DrugList;
         }
 
+    }
+
+
+    /// <summary>
+    /// Первичные структуры 
+    /// </summary>
+    namespace Xml
+    {
+        /// <summary>
+        /// Сведения о лекарственном препарате
+        /// </summary>
+        public class LS
+        {
+            public System.String MNN { get; set; }
+            public System.Int32 LS_Id { get; set; }
+
+            [XmlIgnore]
+            public List<DATA> Products { get; set; } = new List<DATA> { };
+        }
+
+
+        /// <summary>
+        /// Продажи лекарств
+        /// </summary>
+        public class DATA
+        {
+            public System.String NAME { get; set; }
+            public System.String PRICE { get; set; }
+            public System.String COUNT { get; set; }
+            public System.Int32 LS_Id { get; set; }
+        }
     }
 }

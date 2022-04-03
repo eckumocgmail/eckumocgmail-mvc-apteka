@@ -10,9 +10,16 @@ using System.Threading.Tasks;
 
 namespace Mvc_Apteka.Controllers
 {
+    /// <summary>
+    /// Реализация импорта-экспорта файлов в формате json
+    /// </summary>
     public class ProductsJsonController: FilesController
     {
  
+
+        /// <summary>
+        /// Экспорт файла с данными JSON
+        /// </summary>
         public IActionResult DownloadJson([FromServices] AppDbContext appDbContext)
         {
             string json = JsonConvert.SerializeObject(appDbContext.ProductInfos.ToList());
@@ -21,6 +28,9 @@ namespace Mvc_Apteka.Controllers
         }
 
 
+        /// <summary>
+        /// Импорт файлов JSON
+        /// </summary>
         public async Task UploadJson([FromServices] AppDbContext appDbContext)
         {            
             try

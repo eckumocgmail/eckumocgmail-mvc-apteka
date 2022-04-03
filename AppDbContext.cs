@@ -9,6 +9,10 @@ using System.Linq;
 
 namespace Mvc_Apteka
 {
+
+    /// <summary>
+    /// Контекст EFCore 
+    /// </summary>
     public class AppDbContext : DbContext
     {
         public virtual DbSet<ProductCatalog> ProductCatalogs { get; set; }
@@ -24,6 +28,10 @@ namespace Mvc_Apteka
        
         }
 
+        /// <summary>
+        /// Обнаружение изменений сведений о продукции на складе,
+        /// при обнаружении выполняется запись в журнал
+        /// </summary>
         public void BeforeSaveChanges()
         {
             ChangeTracker.DetectChanges();         
@@ -70,19 +78,26 @@ namespace Mvc_Apteka
             }
         }
 
+
+        /// <summary>
+        /// Фиксация изменений 
+        /// </summary>
         public override int SaveChanges()
         {
-
             this.BeforeSaveChanges();
             return base.SaveChanges();
         }
 
-        
+
+
+        /// <summary>
+        /// Фиксация изменений 
+        /// </summary>
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
-        {
-           
+        {           
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
+
 
 
         public IQueryable<ProductInfo> ProductsSearch(IQueryable<ProductInfo> products, int minCount, int maxCount, float minPrice, float maxPrice)
@@ -91,15 +106,12 @@ namespace Mvc_Apteka
             var productsInPriceRange = ProductPriceInRange(productsInCountingRange, minPrice, maxPrice);            
             return productsInPriceRange;
         }
+
         public IQueryable<ProductInfo> ProductCountInRange(IQueryable<ProductInfo> products, int min, int max)
             => products.Where(p => p.ProductCount >= min && p.ProductCount <= max);
 
         public IQueryable<ProductInfo> ProductPriceInRange(IQueryable<ProductInfo> products, float min, float max)
-        {
-            products = products.Where(p => p.ProductPrice >= min && p.ProductPrice <= max);
-            
-            return products;
-        }
+            => products.Where(p => p.ProductPrice >= min && p.ProductPrice <= max);
 
         public IQueryable<ProductInfo> ProductCountInRange(int min, int max)
             => this.ProductCountInRange(this.ProductInfos, min, max);
@@ -110,6 +122,11 @@ namespace Mvc_Apteka
         public bool HasProductWithName(string Name)
             => this.ProductInfos.Any(p => p.ProductName.ToUpper() == Name.ToUpper());
 
+        public ProductCatalog GetProductCatalog(string ProductCatalogName)
+            => this.ProductCatalogs.Where(p => p.ProductCatalogName == ProductCatalogName).FirstOrDefault();
+
+        public ProductInfo GetProductInfo(string ProductName)
+            => this.ProductInfos.Where(p => p.ProductName == ProductName).FirstOrDefault();
 
 
         public void AddOrUpdate(ProductCatalog TargetCatalog)
@@ -161,16 +178,10 @@ namespace Mvc_Apteka
             }
         }
 
-        public ProductCatalog GetProductCatalog(string ProductCatalogName)
-            => this.ProductCatalogs.Where(p => p.ProductCatalogName == ProductCatalogName).FirstOrDefault();
-
-        public ProductInfo GetProductInfo(string ProductName)
-            => this.ProductInfos.Where(p => p.ProductName == ProductName).FirstOrDefault();
-
         public bool UpdateProductInfo(string productName, float productPrice, int productCount)
         {
             ProductInfo p = this.GetProductInfo(productName);
-            if( Equals(p, productName, productPrice, productCount)==false )
+            if (Equals(p, productName, productPrice, productCount) == false)
             {
                 p.ProductName = productName;
                 p.ProductCount = productCount;
@@ -184,6 +195,8 @@ namespace Mvc_Apteka
             ProductInfo.ProductName != ProductName ? false :
             ProductInfo.ProductPrice != ProductPrice ? false :
             ProductInfo.ProductCount != ProductCount ? false : true;
+
+
 
     }
 }

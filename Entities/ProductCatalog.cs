@@ -5,14 +5,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Mvc_Apteka.Entities
 {
+    /// <summary>
+    /// Группировка продукции ( 1 ко многим )   
+    /// </summary>
     [Index(nameof(ProductCatalogName),nameof(ProductCatalogNumber))]
     public class ProductCatalog
     {
-        public ProductCatalog()
-        {
-            this.Products = new List<ProductInfo>();
-        }
-
+        
         [Key]
         public int ID { get; set; }
 
@@ -21,8 +20,11 @@ namespace Mvc_Apteka.Entities
 
         [Required]
         public string ProductCatalogName { get; set; }
-
-
         public virtual ICollection<ProductInfo> Products { get; set; }
+
+        public ProductCatalog()
+        {
+            this.Products = new List<ProductInfo>();
+        }
     }
 }

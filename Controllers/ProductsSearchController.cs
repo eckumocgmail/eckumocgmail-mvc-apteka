@@ -7,10 +7,16 @@ using System.Linq;
 
 namespace Mvc_Apteka.Controllers
 {
+    /// <summary>
+    /// Страница поиска с карточным отображением и фильтрами по цене и объёму продукции
+    /// </summary>
     public class ProductsSearchController: Controller
     {
         public virtual IActionResult Index()=>Redirect("/ProductsSearch/Search");
 
+        /// <summary>
+        /// Переход к странице выбора 
+        /// </summary>
         [HttpGet]
         public virtual IActionResult Search(
            [FromServices] AppDbContext context,
@@ -28,6 +34,9 @@ namespace Mvc_Apteka.Controllers
         }
 
 
+        /// <summary>
+        /// Выбор данных
+        /// </summary>
         public virtual object OnSearch([FromServices] AppDbContext context,
             [FromQuery] string searchInput = "",
             [FromQuery] float minPrice = 0,
@@ -59,6 +68,9 @@ namespace Mvc_Apteka.Controllers
         }
 
 
+        /// <summary>
+        /// Запрос терминов для автоподстановки в строке поиска
+        /// </summary>       
         [HttpGet]
         public virtual object OnInput([FromServices] AppDbContext context, [FromQuery] string value)
         {

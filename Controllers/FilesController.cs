@@ -9,7 +9,7 @@ namespace Mvc_Apteka.Controllers
 
     /// <summary>
     /// Расширяет контроллер методами работы с файлами
-    /// </summary>
+    /// </summary>    
     public class FilesController: Controller
     {
         

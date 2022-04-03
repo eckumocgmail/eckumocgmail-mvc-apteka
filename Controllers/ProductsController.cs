@@ -1,26 +1,20 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-
-using Mvc_Apteka.Controllers.Xml;
+﻿using Microsoft.AspNetCore.Mvc;
 using Mvc_Apteka.Entities;
-
-using Newtonsoft.Json;
-
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml.Serialization;
 
 namespace Mvc_Apteka.Controllers
 {
+
+    /// <summary>
+    /// Просмотр карточки продукции, изменение сведений, поиск, удаление
+    /// </summary>
     public class ProductsController : ProductsSearchController
     {
         public override IActionResult Index() => Redirect("/Products/Search");
 
+
+        /// <summary>
+        /// Просмотр сведений о продукции поиском по списку
+        /// </summary>
         public override IActionResult Search([FromServices] AppDbContext context,
            string searchInput = "",
            [FromQuery] float minPrice = 0,
@@ -34,10 +28,23 @@ namespace Mvc_Apteka.Controllers
             return base.Search(context, searchInput, minPrice, maxPrice, minCount, maxCount, PageNumber, PageSize);
         }
 
+        /// <summary>
+        /// Перход к странице просмотра сведений о продукции
+        /// </summary>
+        public IActionResult Info([FromServices] AppDbContext context, int ID)
+            => View(context.ProductInfos.Find(ID));
+
+
+        /// <summary>
+        /// Переход к странице регистрации сведений о продукции
+        /// </summary>
         [HttpGet]
         public IActionResult Create([FromServices] AppDbContext context)
             => View(new ProductInfo());
 
+        /// <summary>
+        /// Фиксация сведений о новой продукции
+        /// </summary>
         [HttpPost]
         public IActionResult Create([FromServices] AppDbContext context,  ProductInfo model)
         {
@@ -78,12 +85,17 @@ namespace Mvc_Apteka.Controllers
         }
 
 
+        /// <summary>
+        /// Переход к странице редактирования сведений о продукции
+        /// </summary>
         [HttpGet]
         public IActionResult Edit([FromServices] AppDbContext context, int ID)
             => View(context.ProductInfos.Find(ID));
 
 
-        
+        /// <summary>
+        /// Фиксация измененных сведений о продукции
+        /// </summary>
         [HttpPost]
         public IActionResult Edit([FromServices] AppDbContext context, int ID, ProductInfo model)
         {
@@ -132,10 +144,17 @@ namespace Mvc_Apteka.Controllers
         }
 
 
+        /// <summary>
+        /// Переход к странице удаления сведений о продукции
+        /// </summary>
         [HttpGet]
         public IActionResult Delete([FromServices] AppDbContext context, int ID)
             => View(context.ProductInfos.Find(ID));
 
+
+        /// <summary>
+        /// Вып. опер. удаления
+        /// </summary>
         [HttpPost]
         public IActionResult Delete([FromServices] AppDbContext context, int ID, ProductInfo model)
         {
@@ -146,8 +165,7 @@ namespace Mvc_Apteka.Controllers
         }
 
 
-        public IActionResult Info([FromServices] AppDbContext context, int ID)
-            => View(context.ProductInfos.Find(ID));
+
         
     }
 }
