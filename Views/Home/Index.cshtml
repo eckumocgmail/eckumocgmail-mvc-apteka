@@ -2,40 +2,35 @@
     ViewData["Title"] = "Home Page";
 }
 @inject AppDbContext db
-<div class="text-center">
+<div class="text-center" id="MainPane">
     <h1 class="display-4">Медицинские препараты</h1>    
     <p> 
         Предварительно настройте соединение с истоником данных SQLServer 
         и далее по порядку слева направо во избежании программных прерываний.
     </p>
+
+ 
     <div class="d-flex flex-row flex-nowrap" style="width: 100%; justify-content: space-around; ">
         @if (db.Database.CanConnect())
         {            
             <a class="btn btn-primary" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsDatabase/Config"> Настройка соединения с истоником </a>
-            <a class="btn btn-info" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsDatabase/DeleteDatabase">Очистить структуру данных</a>
             <a class="btn btn-info" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsDatabase/CreateDatabase">Создать структуру данных</a>
             <a class="btn btn-info" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsXml/InitXml">Загрузить первичные данные</a>
-            <a class="btn btn-info" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsXml/DownloadXml">Импорт из файла xml</a>
-            <a class="btn btn-info" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsXml/UploadXml">Экспорт в файл xml</a>
-            <a class="btn btn-info" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsJson/DownloadJson">Импорт из файла json</a>
-            <a class="btn btn-info" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsJson/UploadJson">Экспорт в файл json</a>      
         }
         else
         {
             <a class="btn btn-info" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsDatabase/Config"> Настройка соединения с истоником </a>      
-            <a class="btn btn-danger" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsDatabase/DeleteDatabase">Очистить структуру данных</a>
             <a class="btn btn-danger" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsDatabase/CreateDatabase">Создать структуру данных</a>
             <a class="btn btn-danger" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsXml/InitXml">Загрузить первичные данные</a>
-            <a class="btn btn-danger" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsXml/DownloadXml">Импорт из файла xml</a>
-            <a class="btn btn-danger" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsXml/UploadXml">Экспорт в файл xml</a>
-            <a class="btn btn-danger" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsJson/DownloadJson">Импорт из файла json</a>
-            <a class="btn btn-danger" style="flex: 1; width: 100px; margin: 5px;" href="/ProductsJson/UploadJson">Экспорт в файл json</a>      
         }        
         
     </div>
 
 
     <h2>История изменений товаров каталога</h2>
+    <div>
+        <a href="/Home/ClearHistory">отчистить</a>
+    </div>
     <table class="table">
             <thead>
                 <tr>

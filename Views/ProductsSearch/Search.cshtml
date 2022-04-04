@@ -139,7 +139,7 @@
                 switch(message.name){
                     case 'searchInput':
                         const location = `${uri}/OnInput`;
-                        $http().$get(location,message).then(
+                        $http.$get(location,message).then(
                             (state)=>{
                                 if( !state )
                                     throw new Error('Обработчик запроса '+location+' получил не дейтсвительное значение в аргументе state');    
@@ -188,7 +188,7 @@
                         const r = ctrl.$createSearchFilters().$values();
                         Object.assign(r,{searchInput: message.value});
                       
-                        $http().$get(location,r).then(
+                        $http.$get(location,r).then(
                             (state)=>{
                                 if( !state )
                                     throw new Error('Обработчик запроса '+location+' получил не дейтсвительное значение в аргументе state');    
@@ -229,16 +229,7 @@
         Object.assign(ctrl.$global(), ctrl);
         ctrl.$init();
 
-        function $table( properties ){
-            let html = '<table>';
-            html += '<tr><td>Свойство</td><td>Значение</td></tr>';
-            const names = Object.getOwnPropertyNames(properties);
-            for(let i=0; i<names.length; i++){                
-                html += '<tr><td>'+names[i]+'</td><td>'+properties[names[i]]+'</td></tr>';
-            }
-            html += '</table>';
-            return html;
-        }
+        
         function $searchFilters(){
             const pnode = document.createElement('div');        
 
@@ -260,18 +251,25 @@
             const countRangeCtrl = ctrl.countRangeCtrl = $inputRange('Кол-во',   'number', 'count', 0, 1000000, 'кол-во', function validate(){} );                    
             priceRangeCtrl.$layout(pnode);        
             countRangeCtrl.$layout(pnode);
+            pnode.appendChild($button('применить',function(){                
+                $global().$onsearch( {name: 'searchInput', value: document.getElementById('searchInput').value});
+            }));
             ctrl.$values = function(){
-                const filters = {};
-                const priceNumbersInText = priceRangeCtrl.$getRange().replace('[','').replace(']','').split(',');
-                const p1=parseFloat(priceNumbersInText[0]);
-                const p2=parseFloat(priceNumbersInText[1]);
-                filters.minPrice=Math.min(p1,p2);
-                filters.maxPrice=Math.max(p1,p2);
-                const countsNumbersInText = countRangeCtrl.$getRange().replace('[','').replace(']','').split(',');
-                const c1=parseFloat(countsNumbersInText[0]);
-                const c2=parseFloat(countsNumbersInText[1]);
-                filters.minCount=Math.min(c1,c2);
-                filters.maxCount=Math.max(c1,c2);
+                const filters = {minPrice: 0, maxPrice: 100000000,minCount: 0, maxCount: 100000000};
+                try{
+                                    const priceNumbersInText = priceRangeCtrl.$getRange().replace('[','').replace(']','').split(',');
+                    const p1=parseFloat(priceNumbersInText[0]);
+                    const p2=parseFloat(priceNumbersInText[1]);
+                    filters.minPrice=Math.min(p1,p2);
+                    filters.maxPrice=Math.max(p1,p2);
+                    const countsNumbersInText = countRangeCtrl.$getRange().replace('[','').replace(']','').split(',');
+                    const c1=parseFloat(countsNumbersInText[0]);
+                    const c2=parseFloat(countsNumbersInText[1]);
+                    filters.minCount=Math.min(c1,c2);
+                    filters.maxCount=Math.max(c1,c2);
+                }catch(e){
+                    console.error(e);
+                }
                 return filters;
             }
             ctrl.pnode = pnode;            

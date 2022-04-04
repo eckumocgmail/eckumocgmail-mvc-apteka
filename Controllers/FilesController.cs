@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
+
+using System;
 using System.Threading.Tasks;
  
 namespace Mvc_Apteka.Controllers
@@ -12,6 +14,16 @@ namespace Mvc_Apteka.Controllers
     /// </summary>    
     public class FilesController: Controller
     {
+
+        public class FileMessageModel
+        {
+            public string FileName { get; set; }
+            public string ContentType { get; set; }
+            public byte[] FileData { get; set; }
+        }
+
+
+       
         
         /// <summary>
         /// Передача файла на скачивание
@@ -32,15 +44,47 @@ namespace Mvc_Apteka.Controllers
             return File(FileData, ContentType);
         }
 
-        
+
 
         /// <summary>
         /// Возвраащет имя файла загрузки
+        /// request
+        /// => Content-Type=multipart/form-data
+        /// => Resource-Name=index.json
+        /// => Mime-Type=applciation/json
         /// </summary>        
-        public async Task<IFormFileCollection> Upload()
+        public async Task<FileMessageModel> Upload(string contentType, long maxSize)
         {
-            IFormCollection formCollection = await Request.ReadFormAsync();
-            return formCollection.Files;
+            foreach (var header in this.HttpContext.Request.Headers)
+                Console.WriteLine($"{header.Key}={header.Value}");
+            if (HttpContext.Request.ContentType == "multipart/form-data")
+            {
+
+                string resourceName = Request.Headers["Resource-Name"];
+                string mimeType = Request.Headers["Mime-Type"];
+                if (mimeType != contentType ) 
+                {
+                    throw new Exception("Неверный формат файла: " + contentType);
+                }
+
+                long? length = this.HttpContext.Request.ContentLength;
+                if (length != null)
+                {
+                    if (maxSize < length)
+                    {
+                        throw new Exception("Размер файла превышает максимально допустимый размер: "+maxSize);
+                    }
+                    byte[] buffer = new byte[(long)length];
+                    await this.HttpContext.Request.Body.ReadAsync(buffer, 0, (int)length);
+
+                    return new FileMessageModel() { 
+                        FileName = resourceName,
+                        ContentType = mimeType,
+                        FileData = buffer
+                    };
+                }
+            }
+            throw new Exception("Не удалось прочитать файл");
         }        
     }
 }

@@ -9,7 +9,7 @@
 {
     
     <div class="alert alert-info" style="width: 100%"> Структура данных успешно создана</div>
-    <a href="/Home/Index"> На главную </a>
+    <div><a href="/Home/Index"> На главную </a></div>
 }
 else
 {
@@ -19,14 +19,16 @@ else
     @if (db.Database.CanConnect())
     {            
         <div class="alert alert-info" style="width: 100%"> Структура данных была создана ранее</div>
-        <a href="/Home/Index"> На страницу поиска </a>
-        <a href="/Home/Index"> На главную </a>
+        <div><a href="/ProductsDatabase/DeleteDatabase"> Удалить структуру </a></div>
+        <div><a href="/ProductsXml/InitXml"> Импорт первичных данных </a></div>
+        <div><a href="/ProductsSearch/Index"> На страницу поиска </a></div>
+        <div><a href="/Home/Index"> На главную </a></div>
     }
     else
     {
         <div class="alert alert-danger" style="width: 100%"> Не удалось создать структуру данных , необходимо преверить соединение с источником.</div>
-        <a href="/ProductsDatabase/Config"> Перейти к настройки соединения с источником </a>
-        <a href="/Home/Index"> На главную </a>  
+        <div><a href="/ProductsDatabase/Config"> Перейти к настройки соединения с источником </a></div>
+        <div><a href="/Home/Index"> На главную </a>  </div>
     }  
       
 

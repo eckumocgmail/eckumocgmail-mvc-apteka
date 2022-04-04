@@ -9,13 +9,29 @@
 {
     
     <div class="alert alert-info" style="width: 100%"> Структура данных была успешно ликвидирована</div>
-    <a href="/ProductsDatabase/CreateDatabase"> Создать новую структуру </a>
-    <a href="/Home/Index"> На главную </a>
+    <div><a href="/ProductsDatabase/CreateDatabase"> Создать новую структуру </a></div>
+    <div><a href="/Home/Index"> На главную </a></div>
 }
 else
 {
-     
-    <div class="alert alert-danger" style="width: 100%"> Не удалось ликвидировать структуру данных</div>    
-    <a href="/Home/Index"> На главную </a>
+    @inject AppDbContext db
+    @if (db.Database.CanConnect())
+    {            
+        <div class="alert alert-danger" style="width: 100%"> 
+                Возможно структура базы данных была уничтожена ранее,
+                т.к. соединение устаовлено рекомендую создать её заново
+            </div>    
+    
+        <div><a href="/ProductsDatabase/CreateDatabase"> Создать структуру данных </a></div>
+        <div><a href="/ProductsDatabase/Config"> Настройка соединения </a></div>
+        <div><a href="/Home/Index"> На главную </a></div>
+    }
+    else
+    {
+        <div class="alert alert-danger" style="width: 100%"> Не удалось создать структуру данных , необходимо преверить соединение с источником.</div>
+        <div><a href="/ProductsDatabase/Config"> Перейти к настройки соединения с источником </a></div>
+        <div><a href="/Home/Index"> На главную </a>  </div>
+    }  
+    
 
 }

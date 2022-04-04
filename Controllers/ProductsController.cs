@@ -9,6 +9,11 @@ namespace Mvc_Apteka.Controllers
     /// </summary>
     public class ProductsController : ProductsSearchController
     {
+        public IActionResult Clear([FromServices] AppDbContext context)
+        {
+            context.Clear();
+            return Redirect("/Products/Search");
+        }
         public override IActionResult Index() => Redirect("/Products/Search");
 
 

@@ -5,6 +5,7 @@ using Microsoft.Net.Http.Headers;
 
 using Mvc_Apteka.Controllers.Xml;
 using Mvc_Apteka.Entities;
+using Mvc_Apteka.Models;
 
 using Newtonsoft.Json;
 
@@ -25,58 +26,86 @@ namespace Mvc_Apteka.Controllers
     /// </summary>
     public class ProductsXmlController: FilesController
     {
+        private readonly AppDbContext appDbContext;
+
+        public ProductsXmlController(AppDbContext appDbContext)
+        {
+            this.appDbContext = appDbContext;
+        }
 
         /// <summary>
         /// Экспорт файла XML
         /// </summary>
         public IActionResult DownloadXml([FromServices] AppDbContext appDbContext)
         {
-            string json = JsonConvert.SerializeObject(appDbContext.ProductInfos.ToList());
+            string json = SerializeObject(appDbContext.ProductInfos.ToList());
             byte[] bytes = Encoding.UTF8.GetBytes(json);
-            return Download("products.xml", "text/xml", bytes);
+            return Download("products.xml", "application/xml", bytes);
         }
 
+        private string SerializeObject(List<ProductInfo> productInfos)
+        {
+            var serializer = new XmlSerializer(typeof(List<ProductInfo>));
+
+            using(var stream = new MemoryStream())
+            {
+                serializer.Serialize(stream, productInfos);
+                return Encoding.UTF8.GetString(stream.ToArray());
+            }
+        }
+        public T DeserializeObject<T>(string text)
+        {
+            var serializer = new XmlSerializer(typeof(T));
+
+            using (var stream = new StringReader(text))
+            {
+                var infos = (T)serializer.Deserialize(stream);
+                return infos;
+            }
+        }
 
         /// <summary>
         /// Импорт файла XML
         /// </summary>        
-        public async Task UploadXml()
+        public async Task<object> UploadXml()
         {
-            try
+            if (HttpContext.Request.ContentType == "multipart/form-data")
             {
-                foreach (IFormFile file in await this.Upload())
+                try
                 {
-                    using (var stream = file.OpenReadStream())
+                    var FileMessageModel = await Upload("applciation/xml", 1024 * 1024 * 1024);
+                    string text = Encoding.UTF8.GetString(FileMessageModel.FileData);
+                    var records = DeserializeObject<List<ProductInfo>>(text);
+                    foreach (var product in records)
                     {
-                        string ContentType = file.ContentType;
-                        byte[] FileData = new byte[stream.Length];
-                        await stream.ReadAsync(FileData);
-                        string FileName = file.FileName;
-
-                        if (ContentType != "text/xml")
-                        {
-                            throw new System.Exception("ContentType должен быть application/json");
-                        }
-                        else
-                        {
-                            System.IO.File.WriteAllText(FileName, Encoding.UTF8.GetString(FileData));
-                        }
+                      
+                        appDbContext.AddOrUpdate(product);
+                        appDbContext.SaveChanges();                         
                     }
+                    appDbContext.SaveChanges();
+
+                    return MethodResult.FromResult(true);
                 }
-                await Task.FromResult(true);
+                catch (Exception ex)
+                {
+                    return MethodResult.FromException(ex);
+                }
+
             }
-            catch (Exception ex)
+            else
             {
-                await Task.FromException(ex);
+                return View();
             }
         }
+
+        
 
 
         /// <summary>
         /// Считывание данных из XML0-файла
         /// </summary>
         /// <param name="filename">путь к файлу</param>    
-        public object InitXml([FromServices] AppDbContext context, [FromServices] IWebHostEnvironment env)
+        public IActionResult InitXml([FromServices] AppDbContext context, [FromServices] IWebHostEnvironment env)
         {
 
             var DrugList = new List<LS>();
@@ -109,6 +138,9 @@ namespace Mvc_Apteka.Controllers
                         PRICE = row[1].ToString()
                     });
                 }
+
+
+                
                 foreach (LS next in DrugList)
                 {
                     var ProductCatalog = new Entities.ProductCatalog()
@@ -116,26 +148,32 @@ namespace Mvc_Apteka.Controllers
                         ProductCatalogName = next.MNN,
                         ProductCatalogNumber = next.LS_Id
                     };
-                    context.ProductCatalogs.Add(ProductCatalog);
-                    context.SaveChanges();
+                 
                     foreach (DATA record in next.Products)
                     {
-                        
-                        context.ProductInfos.Add(new ProductInfo()
+                        int count = (int)Math.Floor(float.Parse(record.COUNT.Replace(".", ",")));
+                        float price = float.Parse(record.PRICE.Replace(".", ","));
+                        var info = new ProductInfo()
                         {
                             ProductCatalogID = ProductCatalog.ID,
                             ProductName = record.NAME,
-                            ProductCount = (int)Math.Floor(float.Parse(record.COUNT.Replace(".", ","))),
-                            ProductPrice = float.Parse(record.PRICE.Replace(".", ","))
-                        });
+                            ProductCount = 0,
+                            ProductPrice = 0
+                        };
+                        context.AddOrUpdate(info);
+                        context.SaveChanges();
+
+                        info.ProductCount = count;
+                        info.ProductPrice = price;
+
+                        context.SaveChanges();
+
                     }
-                    context.SaveChanges();
+
                     //context.AddOrUpdate(ProductCatalog);
                 }
-
             }
-
-            return DrugList;
+            return View(DrugList);
         }
 
     }

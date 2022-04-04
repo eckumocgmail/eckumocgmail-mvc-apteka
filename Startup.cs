@@ -56,7 +56,7 @@ namespace Mvc_Apteka
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseDeveloperExceptionPage();
+            app.UseMiddleware<AppDbContext>( );
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();            

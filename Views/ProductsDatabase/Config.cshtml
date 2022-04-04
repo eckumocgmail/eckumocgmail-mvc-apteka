@@ -8,7 +8,19 @@
 <form method="POST" action="/ProductsDatabase/Config">
  
     <h2> Настройка соединения с истоником SqlServer </h2>
- 
+    @using (var appDb = new AppDbContext() {
+        ConnectionString = Model 
+    }) {
+        if (appDb.Database.CanConnect())
+        {
+            <div class="alert alert-info">Соединение установлено</div>
+        }
+        else
+        {
+            <div class="alert alert-danger">Соединение не установлено</div>
+            
+        }
+    }
     <div class="form-group">
         <label for="ConnectionString">Строка соединения</label>
         <input value="@Model" type="text" class="form-control" name="ConnectionString" id="ConnectionString"   placeholder="Строка соединения">        
@@ -18,3 +30,4 @@
  
 
 </form>
+<div><a href="/Home/Index"> На главную </a></div>

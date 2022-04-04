@@ -1,0 +1,65 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+ 
+
+<div >
+    
+
+    
+    
+    
+    <form action="/ProductsXml/UploadXml" method="POST" id="UploadForm" enctype="multipart/form-data">
+        <hr/>
+        <button onclick="inputFile.click(); event.preventDefault();" class="btn btn-primary">Загрузить</button>
+        <hr/>
+
+        <script>
+            function updateFileList(){
+                console.log(inputFile.files);            
+                const url = location.origin+'/ProductsXml/UploadXml';
+                const items = [];
+                const fileListContainer = document.getElementById('FileList');
+                $clearNode(fileListContainer);
+                for(let i=0; i<inputFile.files.length; i++){
+                    const ctrl = {
+                        name: inputFile.files[i].name,                    
+                        size: inputFile.files[i].size,
+                        date: inputFile.files[i].lastModifiedDate,
+                        state: 'wait',
+                        pnode: document.createElement('div'),
+                        update: function(text, type){
+                            ctrl.pnode.innerHTML = text;
+                            ctrl.pnode.setAttribute('class','alert alert-'+type);
+                        }
+                    };
+                    
+                    fileListContainer.appendChild(ctrl.pnode);
+                    const file = inputFile.files[i];
+
+                    //upload
+                    const filename = inputFile.files[i].name;                    
+                    const mimetype = 'applciation/xml';   
+                    $upload(file,filename,mimetype,url,
+                        ()=>{ ctrl.update('loaded', 'info'); },
+                        (err)=>{ ctrl.update(err, 'danger'); },
+                        ()=>{ ctrl.update('progress', 'info'); },
+                        ()=>{ ctrl.update('started', 'debug'); },
+                        ()=>{ ctrl.update('completed', 'info'); }
+                    )
+                }          
+                
+                
+                //fileListContainer.appendChild($list(items.map(it=>`${it.name} (${it.size})`)));
+            }
+        </script>
+        <input type="file" id="inputFile" onchange="updateFileList()" accept=".xml" multiple style="display: none;" />
+        <div id="FileList"></div>
+        <hr/>        
+    </form>
+    
+</div>
+ 
+

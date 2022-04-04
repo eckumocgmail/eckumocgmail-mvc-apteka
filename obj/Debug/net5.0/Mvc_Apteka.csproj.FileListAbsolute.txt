@@ -1,9 +1,16 @@
 D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\appsettings.json
 D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\Mvc_Apteka.exe
+D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\wwwroot\css\defauult.css
 D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\wwwroot\css\site.css
 D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\wwwroot\favicon.ico
-D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\wwwroot\js\site-constructor.js
+D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\wwwroot\js\common.js
+D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\wwwroot\js\container.js
+D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\wwwroot\js\dialog.js
+D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\wwwroot\js\form.js
+D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\wwwroot\js\http.js
+D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\wwwroot\js\list.js
 D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\wwwroot\js\site.js
+D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\wwwroot\js\table.js
 D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\wwwroot\lib\bootstrap\dist\css\bootstrap.css
 D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css
 D:\NetProjects\Mvc_Apteka\bin\Debug\net5.0\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js
@@ -409,7 +416,13 @@ D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Mvc_Apteka.TagHelpers.output.cache
 D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Mvc_Apteka.RazorCoreGenerate.cache
 D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\Home\Index.cshtml.g.cs
 D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\Home\Privacy.cshtml.g.cs
+D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\ProductsDatabase\Config.cshtml.g.cs
+D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\ProductsDatabase\CreateDatabase.cshtml.g.cs
+D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\ProductsDatabase\DeleteDatabase.cshtml.g.cs
+D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\ProductsJson\UploadJson.cshtml.g.cs
 D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\ProductsSearch\Search.cshtml.g.cs
+D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\ProductsXml\InitXml.cshtml.g.cs
+D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\ProductsXml\UploadXml.cshtml.g.cs
 D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\Products\Create.cshtml.g.cs
 D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\Products\Delete.cshtml.g.cs
 D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\Products\Edit.cshtml.g.cs
@@ -430,4 +443,3 @@ D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Mvc_Apteka.dll
 D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\ref\Mvc_Apteka.dll
 D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Mvc_Apteka.pdb
 D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Mvc_Apteka.genruntimeconfig.cache
-D:\NetProjects\Mvc_Apteka\obj\Debug\net5.0\Razor\Views\ProductsDatabase\Config.cshtml.g.cs

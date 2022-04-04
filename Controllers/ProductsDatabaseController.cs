@@ -20,10 +20,15 @@ namespace Mvc_Apteka.Controllers
             using (var appDb = new AppDbContext() {
                 ConnectionString = ConnectionString 
             }) {
+
+
                 if (appDb.Database.CanConnect())
-                {
-                    Startup.ConnectionString = ConnectionString;
+                {                                         
                     return Redirect("/Home/Index");
+                }
+                else
+                {
+                    
                 }
             }
             return View("Config",ConnectionString);
